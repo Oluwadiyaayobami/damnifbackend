@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const handlingregister = async (req,res)=>{
     try{
         // check if user information doest exist 
-      const {password ,email,username} = req.body
+      const {password ,email,username ,role} = req.body
 
       const register = await registermodel.findOne({
         $or: [{email}, {username}]
@@ -22,7 +22,8 @@ const handlingregister = async (req,res)=>{
         const addingnewuser = await registermodel.create({
             username :username,
             password :hasingpassword,
-            email: email
+            email: email,
+            role : role
         })
 
         if(addingnewuser){
@@ -77,12 +78,14 @@ const handlinglogin = async (req,res) =>{
                 const acesstoken = await jwt.sign({
                     email:email,
                     userid : logining._id,
-                    username:logining.username
+                    username:logining.username,
+                    role: logining.role
 
                 },process.env.jwtacesstoken,{expiresIn :'15m'})
                 res.status(200).json({
                     status: 'sucessful',
                     message: `login sucessful ${logining.username}`,
+                    role:` ${logining.role}`,
                     acesstoken : acesstoken
                 })
                 
@@ -110,4 +113,10 @@ const handlinggoingtohome = async (req,res) => {
 
 
 }
-module.exports ={handlingregister,handlinglogin,handlinggoingtohome}
+const handlingadmindashboard = async (req,res)=> {
+    res.status(200).json({
+        message : "wellcome to admin dashboard "
+    })
+
+}
+module.exports ={handlingregister,handlinglogin,handlinggoingtohome,handlingadmindashboard}
