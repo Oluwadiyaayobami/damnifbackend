@@ -1,5 +1,7 @@
 const {registermodel,loginmodel} = require('../models/usersmodels.js')
+const handlingtodolist = require('../models/todolistmodel.js')
 const bcrypt = require('bcryptjs')
+const { response } = require('express')
 const jwt = require('jsonwebtoken')
 // const homemiddleware = require('../middleware/homemiddleware.js')
 const handlingregister = async (req,res)=>{
@@ -52,7 +54,6 @@ const handlingregister = async (req,res)=>{
     }
 
 }
-
 const handlinglogin = async (req,res) =>{
     try{
         const {password,email} =req.body
@@ -103,7 +104,6 @@ const handlinglogin = async (req,res) =>{
     }
 
 }
-
 const handlinggoingtohome = async (req,res) => {
     res.status(200).json({
         message :'welcome',
@@ -124,4 +124,38 @@ const subscription = async (req,res)=>{
         message : "welcome to the subscription page "
     })
 }
-module.exports ={handlingregister,handlinglogin,handlinggoingtohome,handlingadmindashboard,subscription}
+
+const changingpassword = async (req,res)=>{
+//  connst asking for email and username
+const {email,username,newpassworddb} = req.body
+
+const usernamedb = await registermodel.findOne({username}&& {email});
+    if(!usernamedb ){
+         res.status(401).json({
+            message : "user with this ucredentialdoesnot esist  does not exist ",
+            status : "failed "
+
+        })
+    }
+    else{
+        const  haspassword = await bcrypt.hash(newpassworddb,10) 
+            const newpassword = await registermodel.findOneAndUpdate({email},{password: haspassword},{new :true})
+
+            if(newpassword){
+                res.status(201).json({
+                    message :"user password updated ",
+                    status :"sucessful "
+                })
+            }
+            else {
+                res.status(500).json({
+                    message :" an error occure  "
+                })
+            }
+
+
+    }
+}
+
+cons
+module.exports ={handlingregister,handlinglogin,handlinggoingtohome,handlingadmindashboard,subscription,changingpassword}
