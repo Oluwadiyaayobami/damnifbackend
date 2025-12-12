@@ -119,4 +119,9 @@ const handlingadmindashboard = async (req,res)=> {
     })
 
 }
-module.exports ={handlingregister,handlinglogin,handlinggoingtohome,handlingadmindashboard}
+const subscription = async (req,res)=>{
+    res.satus(200).json({
+        message : "welcome to the subscription page "
+    })
+}
+module.exports ={handlingregister,handlinglogin,handlinggoingtohome,handlingadmindashboard,subscription}

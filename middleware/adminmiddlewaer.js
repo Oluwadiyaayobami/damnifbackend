@@ -8,3 +8,5 @@ const adminmiddlewaer = async(req,res,next)=>{
 
 }
 module.exports= adminmiddlewaer
+
+// okay now i learn cors and also i learn how to connet my backen end through diffrent ip adress 
