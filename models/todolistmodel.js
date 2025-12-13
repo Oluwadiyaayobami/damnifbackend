@@ -5,7 +5,7 @@ const todolistschma = new mongoose.Schema({
       
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "userinformation",
+      ref: "todolistinfo",
       required: true
     },
     title: {

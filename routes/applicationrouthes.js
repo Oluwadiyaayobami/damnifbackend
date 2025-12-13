@@ -1,5 +1,5 @@
 const express = require('express');
-const {handlingregister,handlinglogin, handlinggoingtohome,handlingadmindashboard,subscription,changingpassword} = require('../controllers/appcontroller');
+const {handlingregister,handlinglogin, handlinggoingtohome,handlingadmindashboard,subscription,changingpassword, addinngnewpost, deletingpost, fetchingallpost} = require('../controllers/appcontroller');
 const homepagemiddlewaer = require('../middleware/homemiddleware.js');
 const adminmiddlewaer = require('../middleware/adminmiddlewaer.js');
 const submiddle = require('../middleware/submiddleware.js');
@@ -14,4 +14,8 @@ routers.get('/admin',homepagemiddlewaer,adminmiddlewaer,handlingadmindashboard)/
 // not we can protect routhes by using middle wear the routhes can take mutiple middle weare as handler 
 routers.get("/userdashboard/subscription",submiddle,subscription)
 routers.put('/updatepassword',changingpassword)
+
+routers.post('/addingnewlist',homepagemiddlewaer,addinngnewpost)
+routers.delete('/deletepost',homepagemiddlewaer,deletingpost)
+routers.get('/allpost',homepagemiddlewaer,fetchingallpost)
 module.exports =routers

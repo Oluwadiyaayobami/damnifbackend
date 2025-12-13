@@ -82,7 +82,7 @@ const handlinglogin = async (req,res) =>{
                     username:logining.username,
                     role: logining.role
 
-                },process.env.jwtacesstoken,{expiresIn :'15m'})
+                },process.env.jwtacesstoken,{expiresIn :'30m'})
                 res.status(200).json({
                     status: 'sucessful',
                     message: `login sucessful ${logining.username}`,
@@ -128,9 +128,9 @@ const subscription = async (req,res)=>{
 const changingpassword = async (req,res)=>{
 //  connst asking for email and username
 const {email,username,newpassworddb} = req.body
-
-const usernamedb = await registermodel.findOne({username}&& {email});
-    if(!usernamedb ){
+console.log(email,username)
+const usernamedb = await registermodel.findOne({email,username});
+    if(!usernamedb){
          res.status(401).json({
             message : "user with this ucredentialdoesnot esist  does not exist ",
             status : "failed "
@@ -138,7 +138,7 @@ const usernamedb = await registermodel.findOne({username}&& {email});
         })
     }
     else{
-        const  haspassword = await bcrypt.hash(newpassworddb,10) 
+        const haspassword = await bcrypt.hash(newpassworddb,10) 
             const newpassword = await registermodel.findOneAndUpdate({email},{password: haspassword},{new :true})
 
             if(newpassword){
@@ -157,5 +157,84 @@ const usernamedb = await registermodel.findOne({username}&& {email});
     }
 }
 
-cons
-module.exports ={handlingregister,handlinglogin,handlinggoingtohome,handlingadmindashboard,subscription,changingpassword}
+const addinngnewpost = async (req,res)=>{
+    try{
+        const {title ,description } = req.body
+        const userId = req.userinformation.userid
+
+    const newtitle = await handlingtodolist.create({
+        title:title,
+        description:description,
+        userId :userId
+        
+    })
+    if(newtitle){
+        res.status(200).json({
+            message :` new post added `,
+            postadded : newtitle
+        })
+    }
+    }
+    catch(error){
+        console.log(error)
+        console.log("I caught an error")
+        res.status(500).json({
+            status :'failed',
+            message : error
+        })
+        
+    } 
+}
+
+const fetchingallpost = async (req,res) =>{
+    try{
+        const userid = req.userinformation.userid
+        const alluserpost = await handlingtodolist.find({userId :userid})
+        if(!alluserpost){
+            res.status(401).json({
+                message :'user not valied relogin pls'
+            })
+        }
+        else {
+            res.status(200).json({
+                status : 'sucessful',
+                message : alluserpost
+            })
+        }
+    }
+    catch(error){
+        res.status(500).json({
+            error : error
+        })
+    }
+    
+}
+const deletingpost  = async (req,res) => {
+    try{
+        const todoid = req.params._id
+        const  userId = req.userinformation.userid
+        console.log(todoid)
+        const handlingdel = await handlingtodolist.findByIdAndDelete({todoid} && {userId})
+        if(handlingdel){
+            res.status(200).json({
+                status : 'list deleted sucessfuly'
+            })
+        }
+        else {
+            res.status(401).json({
+                status :'failed',
+                message : 'user information not found'
+            })
+        }
+    }
+    catch(error){
+        res.status(500).json({
+            status :"failed",
+            message: error
+        })
+
+    }
+
+
+}
+module.exports ={handlingregister,handlinglogin,handlinggoingtohome,handlingadmindashboard,subscription,changingpassword,addinngnewpost,deletingpost,fetchingallpost}
